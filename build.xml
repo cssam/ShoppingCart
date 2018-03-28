@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="AppBuilder" default="deploy" basedir=".">
+	<property file="build.properties"/>
+	<property environment="env" />
+	
+	<path id="classpath">
+			<fileset dir="${env.JBOSS_HOME}/common/lib" includes="*.jar "/>
+	</path>
+	
+	<target name="clean">
+		<echo>Cleaning the ${build.dir}</echo>
+		<delete dir="${build.dir}"/>
+	</target>
+	
+	<target name="init" depends="clean">
+		<echo>Creating the build directory</echo>
+		<mkdir dir="${build.dir}/classes"/>
+	</target>
+	
+	<target name="compile" depends="init">
+		<echo>Compile the source files</echo>
+		<javac srcdir="${src.dir}" destdir="${build.dir}/${class.dir}" debug="${debug}">
+			<classpath refid="classpath"/>
+		</javac>
+	</target>
+	
+	 <target name="deploy" description="JARs the Task" depends="compile">
+	    <jar destfile="${env.JBOSS_HOME}\server\default\deploy/${project.name}.jar">
+	      <metainf dir="${root.dir}/META-INF" />
+	      <fileset dir="${class.dir}">
+	        <include name="ca/**/*.class" />
+	      </fileset>
+	    </jar>
+	 	<delete dir="${build.dir}"/>
+	  </target>
+</project>
